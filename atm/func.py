@@ -1,33 +1,78 @@
 # ATM functionality
 import json
+import csv
 from os import path
 from datetime import datetime
 from itertools import combinations
+import random
 
-# check user login and password
-def user_check(usr_name, usr_pass, file_name):
+# check user login and password json
+def user_check_json(usr_name, usr_pass, file_name):
 	with open(file_name, "r") as user_data:
 		usr_list = json.load(user_data)
 	usr_ok = False
 	pass_ok = False
-	# check user name
+	# check user name and password
 	for rec in usr_list:
-		if usr_name == rec['name']:
+		if usr_name == rec['name'] and usr_pass == rec['pass']:
 			usr_ok = True
-			break
-	else:
-		print('Login is incorrect')
-	# check user password
-	for rec in usr_list:
-		if usr_pass == rec['pass']:
 			pass_ok = True
+			print (f'Welcome {usr_name}! You entered in system')
 			break
 	else:
-		print('Password is incorrect')
-	if usr_name == True and usr_pass == True:
-		print (f'Welcome {usr_name}! You entered in system')
+		print('Login or password is incorrect')
 	return (usr_ok and pass_ok)
 
+
+def user_promo(usr_name):
+	file_name = "promo.csv"
+	promo_fld = ["name","entry", "bonus entry"]
+	promo = False
+	with open(file_name, "r+", newline ='') as promo_file:
+		temp_data_rd = list(csv.reader(promo_file, delimiter=';'))	
+		for prec in temp_data_rd:			
+			us,lcount,bcount = prec
+			if us == usr_name:
+				eidx = prec.index(lcount)
+				bidx = prec.index(bcount)
+				# increse entrance counter
+				prec[eidx]= str(int(prec[eidx]) + 1)
+				# calculate bonus entry every 10
+				if int(prec[eidx]) % 10 == 0:
+					prec[bidx] = str(random.randint(1, 10))
+				# activate promotion
+				if int(prec[eidx]) % 10 == int(prec[bidx]):
+					promo = True
+					prec[bidx] = 0
+					print ('entry #: ',prec[eidx], 'bonus entry #: ',prec[bidx])
+				# write updated data
+				promo_file.seek(0)	
+				temp_data_wr = csv.writer(promo_file, delimiter=';')
+				temp_data_wr.writerows(temp_data_rd)
+		return (promo)
+
+# check user login and password csv
+def user_check_csv(usr_name, usr_pass, file_name):
+	usr_ok = False
+	pass_ok = False
+	usr_rec =[]
+	with open(file_name, "r") as user_data:
+		usr_list = csv.reader(user_data, delimiter=';')	
+		# for rec in usr_list:
+		# 	print(rec[0],rec[1])
+		for rec in usr_list:
+			usr_rec.append(rec)
+		# check user name and password
+		for up in usr_rec:
+			us, psw = up
+			if usr_name == us and usr_pass == psw:
+				usr_ok = True
+				pass_ok = True
+				print (f'Welcome {usr_name}! You entered in system')
+				break
+		else:
+			print('Login or rassword is incorrect')
+		return (usr_ok and pass_ok)
 
 # dummy function
 def atm_dummy(*args):
@@ -45,8 +90,8 @@ def atm_menu():
 	# menu functions set
 	oper_func = {
 	'1': ('acc_check', 'balance_read'),
-	'2': ('acc_check', 'trans_read'),
-	'3': ('trans_check', 'comb_check', 'trans_write', 'balance_write')
+	'2': ('acc_check', 'trans_read_csv'),
+	'3': ('trans_check', 'comb_check', 'trans_write_csv', 'balance_write')
 	}		
 	[print(key,': ', value) for key, value in oper_menu.items()]
 	oper = ''
@@ -93,11 +138,12 @@ def trans_check(usr_name):
 # read user balance
 def balance_read(usr_name, enabl):
 	if enabl == False:
-		return
+		return 0
 	file_name = usr_name + "_balance.json"
 	with open(file_name, "r") as balance_file:
 		balance_data = json.load(balance_file)
 		print (balance_data["date"], balance_data["balance"])
+	return balance_data["balance"]
 
 
 # write user balance
@@ -110,8 +156,8 @@ def balance_write(usr_name, balance_sum):
 		print (balance_rec)
 
 
-# read user transactions
-def trans_read(usr_name, enabl):
+# read user transactions json
+def trans_read_json(usr_name, enabl):
 	if enabl == False:
 		return
 	file_name = usr_name + "_trans.json"
@@ -120,11 +166,26 @@ def trans_read(usr_name, enabl):
 		for trans in trans_data:
 			print (trans["date"], trans["charge"])
 
+# read user transactions csv
+def trans_read_csv(usr_name, enabl):
+	trans_rec =[]
+	if enabl == False:
+		return
+	file_name = usr_name + "_trans.csv"
+	with open(file_name, "r") as trans_file:
+		trans_data = csv.reader(trans_file, delimiter=';')
+		for tdata in trans_data:
+			trans_rec.append(tdata)
+		for trec in trans_rec:
+			print (*trec)
+		
 
-# write user transaction
-def trans_write(usr_name, trans_sum):	
+
+# write user transaction json
+def trans_write_json(usr_name, trans_sum):	
 	file_name = usr_name + "_trans.json"
 	trans_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	trans_fld = ["date","charge"]
 	trans_rec = {"date":trans_date, "charge":trans_sum}
 	with open(file_name, "r+") as trans_file:
 		temp_data = list(json.load(trans_file))
@@ -132,6 +193,21 @@ def trans_write(usr_name, trans_sum):
 		trans_file.seek(0)
 		json.dump(temp_data, trans_file,indent =2)
 		print (trans_rec)
+
+# write user transaction json
+def trans_write_csv(usr_name, trans_sum):	
+	file_name = usr_name + "_trans.csv"
+	trans_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	trans_fld = ["date","charge"]
+	trans_rec = [trans_date, trans_sum]
+	with open(file_name, "r+", newline ='') as trans_file:
+		temp_data_rd = list(csv.reader(trans_file, delimiter=';'))		
+		temp_data_rd.append(trans_rec)
+		#trans_file.seek(0)
+		temp_data_wr = csv.writer(trans_file, delimiter=';')
+		#temp_data_wr.writerows(temp_data_rd)
+		temp_data_wr.writerow(trans_rec)
+		print (*trans_rec)
 
 
 # find sum combinations in list

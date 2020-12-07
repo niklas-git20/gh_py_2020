@@ -1,4 +1,4 @@
-[{"name": "john", "pass" :"1234"},
-{"name" : "jane", "pass" :"1234"},
-{"name" : "tom", "pass" : "1234"}]
+[{"name": "john", "pass" :"12"},
+{"name" : "jane", "pass" :"34"},
+{"name" : "tom", "pass" : "56"}]
 	
