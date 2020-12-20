@@ -32,15 +32,15 @@ driver.get(url)
 # 	( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, \
 # 	document.documentElement.scrollHeight, document.documentElement.offsetHeight )")
 # get scroll height without math
-height = driver.execute_script("return document.body.scrollHeight")
-print('height = ', height)
+h0 = driver.execute_script("return document.body.scrollHeight")
+print('height = ', h0)
 #close browser
 driver.close()
 
 # browser options: headless with height extracted above
 chrome_options = Options()
 chrome_options.add_argument("--headless")
-chrome_options.add_argument(f"--window-size=1920,{height}")
+chrome_options.add_argument(f"--window-size=1920,{h0}")
 chrome_options.add_argument("--hide-scrollbars")
 # run webdriver and get content
 driver = webdriver.Chrome(drv_path, options=chrome_options)
@@ -73,12 +73,16 @@ s_table1 = driver.find_element_by_xpath("//div[@class = 'content']//table")
 s_table1.screenshot('olx_search1.png')
 
 s_table2 = driver.find_element_by_id('offers_table')
+# s_table2 = driver.find_elements_by_xpath("//*[contains(text(), 'fixed offers breakword redesigned')]")
 # image re-size 
 curr_win_size = driver.get_window_size()
-sz = s_table2.size
-h = sz['height']
-driver.set_window_size(curr_win_size['width'], h + 200)
+sz1 = s_table1.size
+h1 = sz1['height']
+sz2 = s_table2.size
+h2 = sz2['height']
+driver.set_window_size(curr_win_size['width'], h2 - h1)
 s_table2.screenshot('olx_search2.png')
 # close web driver
 driver.close()
+print(h2, h1)
 print(curr_url, '\n', new_url)
