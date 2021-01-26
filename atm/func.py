@@ -24,6 +24,30 @@ def user_check_json(usr_name, usr_pass, file_name):
 	return (usr_ok and pass_ok)
 
 
+
+# check user login and password csv
+def user_check_csv(usr_name, usr_pass, file_name):
+	usr_ok = False
+	pass_ok = False
+	usr_rec =[]
+	with open(file_name, "r") as user_data:
+		usr_list = csv.reader(user_data, delimiter=';')	
+		# for rec in usr_list:
+		# 	print(rec[0],rec[1])
+		for rec in usr_list:
+			usr_rec.append(rec)
+		# check user name and password
+		for up in usr_rec:
+			us, psw = up
+			if usr_name == us and usr_pass == psw:
+				usr_ok = True
+				pass_ok = True
+				print (f'Welcome {usr_name}! You entered in system')
+				break
+		else:
+			print('Login or rassword is incorrect')
+		return (usr_ok and pass_ok)
+
 def user_promo(usr_name):
 	file_name = "promo.csv"
 	promo_fld = ["name","entry", "bonus entry"]
@@ -51,28 +75,7 @@ def user_promo(usr_name):
 				temp_data_wr.writerows(temp_data_rd)
 		return (promo)
 
-# check user login and password csv
-def user_check_csv(usr_name, usr_pass, file_name):
-	usr_ok = False
-	pass_ok = False
-	usr_rec =[]
-	with open(file_name, "r") as user_data:
-		usr_list = csv.reader(user_data, delimiter=';')	
-		# for rec in usr_list:
-		# 	print(rec[0],rec[1])
-		for rec in usr_list:
-			usr_rec.append(rec)
-		# check user name and password
-		for up in usr_rec:
-			us, psw = up
-			if usr_name == us and usr_pass == psw:
-				usr_ok = True
-				pass_ok = True
-				print (f'Welcome {usr_name}! You entered in system')
-				break
-		else:
-			print('Login or rassword is incorrect')
-		return (usr_ok and pass_ok)
+
 
 # dummy function
 def atm_dummy(*args):
@@ -89,9 +92,9 @@ def atm_menu():
 	}
 	# menu functions set
 	oper_func = {
-	'1': ('acc_check', 'balance_read'),
+	'1': ('acc_check', 'balance_read_json'),
 	'2': ('acc_check', 'trans_read_csv'),
-	'3': ('trans_check', 'comb_check', 'trans_write_csv', 'balance_write')
+	'3': ('trans_check', 'comb_check', 'trans_write_csv', 'balance_write_json')
 	}		
 	[print(key,': ', value) for key, value in oper_menu.items()]
 	oper = ''
@@ -136,7 +139,7 @@ def trans_check(usr_name):
 
 
 # read user balance
-def balance_read(usr_name, enabl):
+def balance_read_json(usr_name, enabl):
 	if enabl == False:
 		return 0
 	file_name = usr_name + "_balance.json"
@@ -147,7 +150,7 @@ def balance_read(usr_name, enabl):
 
 
 # write user balance
-def balance_write(usr_name, balance_sum):
+def balance_write_json(usr_name, balance_sum):
 	file_name = usr_name + "_balance.json"
 	balance_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	balance_rec = {"date":balance_date, "balance":balance_sum}
@@ -194,7 +197,7 @@ def trans_write_json(usr_name, trans_sum):
 		json.dump(temp_data, trans_file,indent =2)
 		print (trans_rec)
 
-# write user transaction json
+# write user transaction csv
 def trans_write_csv(usr_name, trans_sum):	
 	file_name = usr_name + "_trans.csv"
 	trans_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')

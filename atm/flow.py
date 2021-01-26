@@ -1,6 +1,7 @@
 from func import *
 
-# main route
+
+# ATM main route
 while True:
 	# user login
 	usr_name = input('Enter user name: ')
@@ -13,14 +14,14 @@ while True:
 	log_check = user_check_csv(usr_name, usr_pass, "users.csv" )
 	if log_check == False:
 		continue
-	# activate promo program
+	# activate promo program json
 	bprog = user_promo(usr_name)
 	print(bprog)
 	# start promotion program
 	if bprog:
-		bbalance = balance_read(usr_name, enabl = True)
+		bbalance = balance_read_json(usr_name, enabl = True)
 		bbalance += (bbalance // 10)
-		balance_write(usr_name, bbalance)
+		balance_write_json(usr_name, bbalance)
 	sel, func = atm_menu()
 	# select operation functions
 	if sel == '1' or sel == '2':
@@ -77,7 +78,7 @@ while True:
 		if trans_ok and (comb_ok or discharg == False):
 			#trans_write_json(usr_name, trans_sum)
 			trans_write_csv(usr_name, trans_sum)
-			balance_write(usr_name, balance_sum)
+			balance_write_json(usr_name, balance_sum)
 			with open("note_box.json", "w") as note_file:
 				json.dump(stack_u, note_file)
 		
