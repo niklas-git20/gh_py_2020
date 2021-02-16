@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Toys shop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        .bcontent {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid bcontent">
+        <h2>Toys shop</h2>
+        <hr />
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">About</a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Categories</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'home' %}">All products</a>
+                        {% for category in links %}
+                        <a class="dropdown-item" href="{{category.get_url}}">{{category.name}}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Articles</a>
+                </li>
+                {% if request.user.is_authenticated and request.user.first_name %}
+                <li class="nav-item">
+                    <a class="nav-link">Welcome, {{request.user.first_name}}!</a>
+                    <span class="material-icons">account_circle</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Log out</a>
+                    <span class="material-icons">exit_to_app</span>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'signup' %}">Sign up</a>
+                    <span class="material-icons">add</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Log in</a>
+                    <span class="material-icons">login</span>
+                </li>
+                {% endif %}
+
+                {% if item_count > 0 %}
+                <li class="nav-item">
+                    <a class="nav-link text-light text-uppercase font-weight-bold px-3" 
+                    href="{% url 'cart_detail' %}">
+                        <span class="material-icons cart-icon">add_shopping_cart</span>
+                        ({{item_count}})
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+
+
+            
+
+        <form class="form-inline">
+            <div class="input-group">
+                <input type="text" placeholder="Search"><br>
+                <div>
+                    <button><i><span class="material-icons">search</span></i>
+                        
+                    </button>
+                </div>
+            </div>
+        </form>
+        
+
+        </nav>
+    </div>
+</body>
+</html>
