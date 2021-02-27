@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+
+<body>
+	<h1>olx advertisement scrape</h1>
+	<form action ="{% url 'results' %}">		
+  		<label for="advert_url">add search url:</label>
+  		<input type="text" id="advert_url" name="advert_url">
+  		<h5>e.g. https://www.olx.ua/elektronika/kompyutery-i-komplektuyuschie/nastolnye-kompyutery/</h5><br><br>
+
+		<label for="advert_quant">quantity (between 1 and 10):</label>
+		<input type="number" id="advert_quant" name="advert_quant" min="1" max="10">
+		
+		<br><br>
+  		<input type="submit" value="Scrape!">
+	</form>
+
+</body>
+</html>
+
+
+
+
